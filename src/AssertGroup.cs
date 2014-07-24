@@ -11,13 +11,23 @@ namespace Nunit_GroupAssert
 
     #endregion
 
-    public class AssertGroup
+    public class AssertGroup : IDisposable
     {
         private readonly IList<GroupedAssertion> _assertions;
+
+        private bool _hasVerifiedAlready = false;
 
         public AssertGroup()
         {
             this._assertions = new List<GroupedAssertion>();
+        }
+
+        public void Dispose()
+        {
+            if (!_hasVerifiedAlready)
+            {
+                this.Verify();
+            } 
         }
 
         public bool ShowFailingFilePath { get; set; }
@@ -31,6 +41,7 @@ namespace Nunit_GroupAssert
 
         public void Verify()
         {
+            this._hasVerifiedAlready = true;
             var exceptionCount = 0;
             var exceptionTrace = new StringBuilder();
             var hasThrown = false;

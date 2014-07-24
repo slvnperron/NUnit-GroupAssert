@@ -14,12 +14,14 @@ namespace Tests
         [Test]
         public void Verify_GroupsExceptions()
         {
-            var group = new AssertGroup();
-            group.Add(() => Assert.AreEqual(10, 20));
-            group.Add(() => Assert.AreEqual(1, 1));
-            group.Add(() => Assert.AreEqual(3, 4));
-            group.Add(() => Assert.IsTrue(1 > 3));
-            group.Verify();
+            // Verifies on disposal
+            using (var group = new AssertGroup())
+            {
+                group.Add(() => Assert.AreEqual(10, 20));
+                group.Add(() => Assert.AreEqual(1, 1));
+                group.Add(() => Assert.AreEqual(3, 4));
+                group.Add(() => Assert.IsTrue(1 > 3));
+            }
         }
 
         [Test]
