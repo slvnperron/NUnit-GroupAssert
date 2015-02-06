@@ -8,6 +8,7 @@ namespace Nunit_GroupAssert
     using System.Text;
 
     using NUnit.Framework;
+    using System.Diagnostics;
 
     #endregion
 
@@ -32,9 +33,7 @@ namespace Nunit_GroupAssert
 
         public bool ShowFailingFilePath { get; set; }
 
-        public void Add(
-            Action assertion, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null,
-            [CallerFilePath] string filePath = null)
+        public void Add(Action assertion)
         {
             try
             {
@@ -43,7 +42,7 @@ namespace Nunit_GroupAssert
             catch (AssertionException exception)
             {
                 this._assertions.Add(new GroupedAssertion(exception.Message,
-                    new System.Diagnostics.StackTrace(exception, true)));
+                    new StackTrace(exception, true)));
             }
         }
 

@@ -5,7 +5,6 @@ namespace Tests
     using NUnit.Framework;
 
     using Nunit_GroupAssert;
-    using System;
 
     #endregion
 
@@ -44,14 +43,13 @@ namespace Tests
             }
         }
 
-
         [Test]
         public void Verify_ThatThow_InPlace()
         {
             Obj v = new Obj(10);
 
             var group = new AssertGroup();
-            group.Add(() => Assert.AreEqual(v.Value, 11)); // should fail test
+            group.Add(() => Assert.AreEqual(v.Value, 11, "Should fail test"));
 
             v.Value = 10;
 
