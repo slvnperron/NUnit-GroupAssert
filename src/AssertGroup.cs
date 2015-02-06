@@ -8,6 +8,7 @@ namespace Nunit_GroupAssert
     using System.Text;
 
     using NUnit.Framework;
+    using System.Diagnostics;
 
     #endregion
 
@@ -32,11 +33,17 @@ namespace Nunit_GroupAssert
 
         public bool ShowFailingFilePath { get; set; }
 
-        public void Add(
-            Action assertion, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string caller = null,
-            [CallerFilePath] string filePath = null)
+        public void Add(Action assertion)
         {
-            this._assertions.Add(new GroupedAssertion(assertion, lineNumber, caller, filePath));
+            try
+            {
+                assertion();
+            }
+            catch (AssertionException exception)
+            {
+                this._assertions.Add(new GroupedAssertion(exception.Message,
+                    new StackTrace(exception, true)));
+            }
         }
 
         public void Verify()
@@ -50,27 +57,14 @@ namespace Nunit_GroupAssert
 
             foreach (var assertion in this._assertions)
             {
-                try
-                {
-                    assertion.Execute();
-                }
-                catch (AssertionException exception)
-                {
-                    if (exceptionCount > 0) exceptionTrace.AppendLine();
+                if (exceptionCount > 0) exceptionTrace.AppendLine();
 
-                    exceptionTrace.AppendLine(
-                        string.Format("{0})\t{1}", ++exceptionCount, FormatExceptionMessage(exception.Message)));
+                exceptionTrace.AppendLine(
+                    string.Format("{0})\t{1}", ++exceptionCount, FormatExceptionMessage(assertion.Message)));
 
-                    exceptionTrace.AppendLine(
-                        string.Format("\tFrom {0} at line {1}", assertion.Caller, assertion.LineNumber));
+                exceptionTrace.AppendLine(assertion.StackTrace.ToString());
 
-                    if (this.ShowFailingFilePath)
-                    {
-                        exceptionTrace.AppendLine("\tIn file: " + assertion.FilePath);
-                    }
-
-                    hasThrown = true;
-                }
+                hasThrown = true;
             }
 
             if (hasThrown)
