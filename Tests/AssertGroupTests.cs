@@ -44,7 +44,7 @@ namespace Tests
         }
 
         [Test]
-        public void Verify_ThatThow_InPlace()
+        public void Verify_ThatThrow_InPlace()
         {
             Obj v = new Obj(10);
 
