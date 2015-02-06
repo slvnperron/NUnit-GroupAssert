@@ -3,30 +3,20 @@ namespace Nunit_GroupAssert
     #region
 
     using System;
+    using System.Diagnostics;
 
     #endregion
 
     public class GroupedAssertion
     {
-        private readonly Action _action;
+        public String Message { get; private set; }
 
-        public GroupedAssertion(Action action, int lineNumber, string caller, string filePath)
+        public StackTrace StackTrace { get; private set; }
+
+        public GroupedAssertion(String message, StackTrace stackTrace)
         {
-            this._action = action;
-            this.LineNumber = lineNumber;
-            this.FilePath = filePath;
-            this.Caller = caller;
-        }
-
-        public string Caller { get; private set; }
-
-        public int LineNumber { get; private set; }
-
-        public string FilePath { get; private set; }
-
-        public void Execute()
-        {
-            this._action();
+            this.Message = message;
+            this.StackTrace = stackTrace;
         }
     }
 }
